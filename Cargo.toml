@@ -7,3 +7,6 @@ description = "CLI tool to fix line endings, remove empty lines at the end of th
 [dependencies]
 anyhow = "1.0.100"
 clap = { version = "4.5.49", features = ["derive"] }
+clap-verbosity-flag = "3.0.4"
+env_logger = "0.11.8"
+log = "0.4.28"
