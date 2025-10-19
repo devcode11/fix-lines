@@ -19,7 +19,7 @@ struct CliArgs {
     verbosity: clap_verbosity_flag::Verbosity,
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args = CliArgs::parse();
     env_logger::Builder::new()
         .filter_level(args.verbosity.into())
@@ -28,8 +28,9 @@ fn main() {
     info!("{:?}", args);
 
     for path in args.file_paths {
-        _ = process_file(path.as_path());
+        _ = process_file(path.as_path())?;
     }
+    Ok(())
 }
 
 fn process_file(file_path: &std::path::Path) -> Result<()> {
