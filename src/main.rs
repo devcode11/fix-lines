@@ -38,16 +38,27 @@ fn process_file(file_path: &std::path::Path) -> Result<()> {
     let content = std::fs::read_to_string(file_path)
         .with_context(|| format!("Failed to read file: {}", file_path.display()))?;
 
+    std::fs::write(file_path, fix_content(content))
+        .with_context(|| format!("Failed to update file: {}", file_path.display()))?;
+    Ok(())
+}
+
+fn fix_content(content: String) -> String {
     let mut fixed = content
+        .trim_ascii_end()
         .lines()
         .map(|line| line.trim_ascii_end())
         .collect::<Vec<&str>>()
         .join(TO_LINE_ENDING)
-        .trim_ascii_end()
         .to_string();
     fixed.push_str(TO_LINE_ENDING);
+    fixed
+}
 
-    std::fs::write(file_path, fixed)
-        .with_context(|| format!("Failed to update file: {}", file_path.display()))?;
-    Ok(())
+#[test]
+fn fix_some_string() {
+    let input = String::from("# some heading\n\na saw ep\n\'spa\ns eqwe q                  qsdqq\n  dqqw e \r asd aaewe\na \nsda\n e            \r\njak\n\nasjalsejlasjea;laksd;a\na xd\nas d\n\n\n\nas dase alkj\n\n\r\n\nasase\n\n\n");
+    let expected = String::from("# some heading\n\na saw ep\n\'spa\ns eqwe q                  qsdqq\n  dqqw e \r asd aaewe\na\nsda\n e\njak\n\nasjalsejlasjea;laksd;a\na xd\nas d\n\n\n\nas dase alkj\n\n\n\nasase\n");
+    let actual = fix_content(input);
+    assert_eq!(actual, expected);
 }
