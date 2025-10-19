@@ -1,3 +1,5 @@
+use anyhow::{Context, Result};
+
 #[cfg(windows)]
 const TO_LINE_ENDING: &str = "\r\n";
 #[cfg(not(windows))]
@@ -10,7 +12,7 @@ fn main() {
             print_help(invoke_name);
             return;
         }
-        process_file(arg);
+        _ = process_file(arg.as_str());
     }
 }
 
@@ -21,8 +23,10 @@ fn print_help(invoke_name: String) {
     );
 }
 
-fn process_file(file_path: String) {
-    let read_content = std::fs::read_to_string(file_path.as_str()).expect("Failed to read file");
+fn process_file(file_path: &str) -> Result<()> {
+    let read_content = std::fs::read_to_string(file_path)
+        .with_context(|| format!("Failed to read file: {}", file_path))?;
+
     let mut fixed = read_content
         .lines()
         .map(|line| line.trim_ascii_end())
@@ -32,5 +36,7 @@ fn process_file(file_path: String) {
         .to_string();
     fixed.push_str(TO_LINE_ENDING);
 
-    std::fs::write(file_path.as_str(), fixed).expect("Failed to write file");
+    std::fs::write(file_path, fixed)
+        .with_context(|| format!("Failed to update file: {}", file_path))?;
+    Ok(())
 }
