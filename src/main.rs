@@ -1,33 +1,33 @@
 use anyhow::{Context, Result};
+use clap::Parser;
 
 #[cfg(windows)]
 const TO_LINE_ENDING: &str = "\r\n";
 #[cfg(not(windows))]
 const TO_LINE_ENDING: &str = "\n";
 
+/// Fix line endings, remove empty lines at the end of the file and insert a final new line.
+#[derive(Parser)]
+#[command(version, about, long_about=None)]
+struct CliArgs {
+    /// Files to fix
+    #[arg(required = true)]
+    file_paths: Vec<std::path::PathBuf>,
+}
+
 fn main() {
-    let invoke_name = std::env::args().nth(0).expect("Missing zeroth argument");
-    for arg in std::env::args().skip(1) {
-        if arg == "--help" || arg == "-h" {
-            print_help(invoke_name);
-            return;
-        }
-        _ = process_file(arg.as_str());
+    let args = CliArgs::parse();
+
+    for path in args.file_paths {
+        _ = process_file(path.as_path());
     }
 }
 
-fn print_help(invoke_name: String) {
-    println!(
-"Fix line endings, remove empty lines at the end of the file and insert a final new line.\nusage: {} <file path>...",
-    invoke_name
-    );
-}
+fn process_file(file_path: &std::path::Path) -> Result<()> {
+    let content = std::fs::read_to_string(file_path)
+        .with_context(|| format!("Failed to read file: {}", file_path.display()))?;
 
-fn process_file(file_path: &str) -> Result<()> {
-    let read_content = std::fs::read_to_string(file_path)
-        .with_context(|| format!("Failed to read file: {}", file_path))?;
-
-    let mut fixed = read_content
+    let mut fixed = content
         .lines()
         .map(|line| line.trim_ascii_end())
         .collect::<Vec<&str>>()
@@ -37,6 +37,6 @@ fn process_file(file_path: &str) -> Result<()> {
     fixed.push_str(TO_LINE_ENDING);
 
     std::fs::write(file_path, fixed)
-        .with_context(|| format!("Failed to update file: {}", file_path))?;
+        .with_context(|| format!("Failed to update file: {}", file_path.display()))?;
     Ok(())
 }
