@@ -1,9 +1,9 @@
 use std::io::Result;
 
 #[cfg(windows)]
-const TO_LINE_ENDING: &str = "\r\n";
+pub const DEFAULT_LINE_ENDING: &str = "\r\n";
 #[cfg(not(windows))]
-const TO_LINE_ENDING: &str = "\n";
+pub const DEFAULT_LINE_ENDING: &str = "\n";
 
 pub fn fix_content(mut reader: impl std::io::Read, mut writer: impl std::io::Write) -> Result<()> {
     let mut buf = String::new();
@@ -13,15 +13,14 @@ pub fn fix_content(mut reader: impl std::io::Read, mut writer: impl std::io::Wri
 }
 
 fn fix_string(content: String) -> String {
-    let mut fixed = content
+    content
         .trim_ascii_end()
         .lines()
         .map(|line| line.trim_ascii_end())
         .collect::<Vec<&str>>()
-        .join(TO_LINE_ENDING)
-        .to_string();
-    fixed.push_str(TO_LINE_ENDING);
-    fixed
+        .join(DEFAULT_LINE_ENDING)
+        .to_string()
+        + DEFAULT_LINE_ENDING
 }
 
 #[test]
