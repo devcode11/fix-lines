@@ -23,7 +23,7 @@ fn main() -> Result<()> {
     info!("{:?}", args);
 
     for path in args.file_paths {
-        _ = process_file(path.as_path())?;
+        process_file(path.as_path())?;
     }
     Ok(())
 }
