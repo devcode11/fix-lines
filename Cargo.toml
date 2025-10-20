@@ -3,6 +3,7 @@ name = "fix-lines"
 version = "0.1.0"
 edition = "2024"
 description = "CLI tool to fix line endings, remove empty lines at the end of the file and insert a final new line."
+license = "AGPL-3.0-or-later"
 
 [dependencies]
 anyhow = "1.0.100"
