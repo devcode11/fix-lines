@@ -14,6 +14,8 @@ env:
 jobs:
   # Based on: https://rakhim.exotext.com/how-to-build-and-publish-multi-platform-rust-binaries
   linux_windows:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
