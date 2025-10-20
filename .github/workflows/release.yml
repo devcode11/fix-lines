@@ -34,7 +34,7 @@ jobs:
         name: Fix-lines
         artifacts: "fix-lines-gnu-linux-x86_64.tar.gz,fix-lines-windows.zip"
         commit: ${{ github.ref }}
-        tag: ${{ parameters.release_tag }}
+        tag: ${{ inputs.release_tag }}
         draft: true
         generateReleaseNotes: true
         artifactErrorsFailBuild: true
