@@ -29,7 +29,8 @@ jobs:
       run: tar -cvzf fix-lines-gnu-linux-x86_64.tar.gz -C target/x86_64-unknown-linux-musl/release fix-lines
     - name: Zip Windows binary
       run: zip -j fix-lines-windows.zip target/x86_64-pc-windows-gnu/release/fix-lines.exe
-    - uses: ncipollo/release-action@v1
+    - name: Create draft release with artifacts
+      uses: ncipollo/release-action@v1
       with:
         name: Fix-lines
         artifacts: "fix-lines-gnu-linux-x86_64.tar.gz,fix-lines-windows.zip"
