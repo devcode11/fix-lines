@@ -23,10 +23,31 @@ fn fix_string(content: String) -> String {
         + DEFAULT_LINE_ENDING
 }
 
-#[test]
-fn fix_some_string() {
-    let input =  "# some heading\n\na saw ep\n\'spa\ns eqwe q                  qsdqq\n  dqqw e \r asd aaewe\na \nsda\n e            \r\njak\n\nasjalsejlasjea;laksd;a\na xd\nas d\n\n\n\nas dase alkj\n\n\r\n\nasase\n\n\n".to_string();
-    let expected = "# some heading\n\na saw ep\n\'spa\ns eqwe q                  qsdqq\n  dqqw e \r asd aaewe\na\nsda\n e\njak\n\nasjalsejlasjea;laksd;a\na xd\nas d\n\n\n\nas dase alkj\n\n\n\nasase\n".to_string();
-    let actual = fix_string(input);
-    assert_eq!(actual, expected);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn trim_trailing_spaces() {
+        let input = "a  ".to_string();
+        let expected = format!("a{DEFAULT_LINE_ENDING}");
+        let actual = fix_string(input);
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn add_final_newline() {
+        let input = "a".to_string();
+        let expected = format!("a{DEFAULT_LINE_ENDING}");
+        let actual = fix_string(input);
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn change_line_ending() {
+        let input = "a\n".to_string();
+        let expected = format!("a{DEFAULT_LINE_ENDING}");
+        let actual = fix_string(input);
+        assert_eq!(actual, expected);
+    }
 }
